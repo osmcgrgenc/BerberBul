@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import AuthButton from "@/components/AuthButton";
 import { Suspense } from "react";
 import Link from "next/link";
 import { TenantProvider } from "@/context/TenantContext";
+import { Toaster } from "@/components/ui/sonner"; // Toaster'ı import et
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-manrope",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${manrope.variable} font-sans antialiased`}
       >
         <TenantProvider>
           <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
@@ -46,6 +42,7 @@ export default function RootLayout({
             {children}
           </main>
         </TenantProvider>
+        <Toaster /> {/* Toaster bileşenini ekle */}
       </body>
     </html>
   );
