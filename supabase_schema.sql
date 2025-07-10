@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS services CASCADE;
 DROP TABLE IF EXISTS barbers CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS tenants CASCADE;
+DROP TYPE IF EXISTS barber_category;
 
 -- tenants tablosu
 CREATE TABLE tenants (
@@ -14,12 +15,18 @@ CREATE TABLE tenants (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+-- Berber kategorileri için ENUM tipi
+CREATE TYPE barber_category AS ENUM ('erkek_kuaforu', 'kadin_kuaforu', 'pet_kuaforu', 'oto_kuaforu');
+
 -- barbers tablosu
 CREATE TABLE barbers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Supabase Auth kullanıcısı
   name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL, -- SEO dostu URL için
+  category barber_category, -- Kategori
+  bio TEXT, -- Berberin tanıtım yazısı
   description TEXT,
   address TEXT,
   phone TEXT,
