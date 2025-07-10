@@ -21,7 +21,14 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { data: { user }, error } = await supabase.auth.signUp({ email, password });
+    const { data: { user }, error } = await supabase.auth.signUp({ email, password, 
+      options: {
+        data: { 
+          name: name,
+          role: role
+        }
+      }
+    });
     setLoading(false);
     if (error) {
       toast.error(error.message || "Kayıt başarısız!");
@@ -29,7 +36,7 @@ export default function SignupPage() {
       toast.success("Kayıt başarılı! Lütfen e-postanızı kontrol edin.");
       if (role === "barber") {
         await supabase.from("barbers").insert({
-          id: user.id,
+          user_id: user.id,
           name: user.user_metadata.name,
           email: user.email,
           role: "barber"
@@ -37,7 +44,7 @@ export default function SignupPage() {
         router.push("/barber/dashboard");
       } else {
         await supabase.from("customers").insert({
-          id: user.id,
+          user_id: user.id,
           name: user.user_metadata.name,
           email: user.email,
           role: "customer"

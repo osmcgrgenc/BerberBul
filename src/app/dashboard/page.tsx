@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { Calendar, Heart, User } from 'lucide-react'
 import { useState, useEffect } from 'react' // useState ve useEffect import edildi
+import { toast } from 'sonner'
 
 interface Appointment {
   id: string;
@@ -65,7 +66,7 @@ export default function DashboardPage() { // async kaldırıldı
 
       if (fetchedAppointmentsError) {
         setAppointmentsError(fetchedAppointmentsError); // State'e kaydet
-        console.error('Error loading appointments:', fetchedAppointmentsError)
+        toast.error(fetchedAppointmentsError.message || "Randevu yüklenirken bir hata oluştu!");
       } else {
         setAppointments(appointmentsData || [])
       }
