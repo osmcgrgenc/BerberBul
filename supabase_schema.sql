@@ -105,6 +105,18 @@ CREATE TABLE appointments (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+-- reviews tablosu
+CREATE TABLE reviews (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  appointment_id UUID REFERENCES appointments(id) ON DELETE CASCADE UNIQUE, -- Bir randevu için sadece bir yorum
+  rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 -- RLS (Row Level Security) Politikaları
 -- tenants tablosu için RLS
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
@@ -146,6 +158,12 @@ CREATE POLICY "Customers can view their own appointments" ON appointments FOR SE
 CREATE POLICY "Barbers can view and update their own appointments" ON appointments FOR ALL USING (barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid()));
 -- Müşteriler randevu oluşturabilir
 CREATE POLICY "Customers can create appointments" ON appointments FOR INSERT WITH CHECK (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
+
+-- reviews tablosu için RLS
+ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to reviews" ON reviews FOR SELECT USING (true);
+CREATE POLICY "Customers can insert their own reviews" ON reviews FOR INSERT WITH CHECK (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
+CREATE POLICY "Customers can update their own reviews" ON reviews FOR UPDATE USING (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
 
 -- Örnek kiracı ekleme
 INSERT INTO tenants (slug, name) VALUES ('ahmetkuafor', 'Ahmet Kuaför');

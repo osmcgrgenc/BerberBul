@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { ReviewForm } from '@/components/molecules/ReviewForm';
 
 export default async function MyAppointmentsPage() {
   const supabase = createClient();
@@ -28,8 +29,9 @@ export default async function MyAppointmentsPage() {
     .select(
       `
       *,
-      barbers ( name, address ),
-      services ( name, price, duration_minutes )
+      barbers ( id, name, address, slug ),
+      services ( name, price, duration_minutes ),
+      reviews ( id )
       `
     )
     .eq('customer_id', customerData.id)
@@ -54,6 +56,16 @@ export default async function MyAppointmentsPage() {
               <p>Süre: <span className="font-medium">{appointment.services.duration_minutes} dk</span></p>
               <p>Tarih: <span className="font-medium">{format(new Date(appointment.appointment_time), 'dd MMMM yyyy HH:mm', { locale: tr })}</span></p>
               <p>Durum: <span className="font-medium capitalize">{appointment.status}</span></p>
+
+              {appointment.status === 'completed' && appointment.reviews.length === 0 && (
+                <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
+                  <h3 className="text-lg font-semibold mb-2">Bu randevuyu değerlendir</h3>
+                  <ReviewForm barberId={appointment.barbers.id} appointmentId={appointment.id} />
+                </div>
+              )}
+              {appointment.status === 'completed' && appointment.reviews.length > 0 && (
+                <p className="mt-4 text-green-600">Bu randevu için yorumunuz gönderildi.</p>
+              )}
             </div>
           ))}
         </div>
