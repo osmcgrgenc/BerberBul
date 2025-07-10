@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS barbers CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS tenants CASCADE;
 DROP TYPE IF EXISTS barber_category;
+DROP TYPE IF EXISTS subscription_status;
 
 -- tenants tablosu
 CREATE TABLE tenants (
@@ -17,6 +18,7 @@ CREATE TABLE tenants (
 
 -- Berber kategorileri için ENUM tipi
 CREATE TYPE barber_category AS ENUM ('erkek_kuaforu', 'kadin_kuaforu', 'pet_kuaforu', 'oto_kuaforu');
+CREATE TYPE subscription_status AS ENUM ('active', 'trialing', 'past_due', 'canceled', 'unpaid');
 
 -- barbers tablosu
 CREATE TABLE barbers (
@@ -31,6 +33,11 @@ CREATE TABLE barbers (
   address TEXT,
   phone TEXT,
   email TEXT,
+  -- Abonelik bilgileri
+  subscription_status subscription_status DEFAULT 'trialing',
+  plan_id TEXT,
+  current_period_end TIMESTAMP WITH TIME ZONE,
+  
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
