@@ -7,6 +7,10 @@ DROP TABLE IF EXISTS tenants CASCADE;
 DROP TYPE IF EXISTS barber_category;
 DROP TYPE IF EXISTS subscription_status;
 
+DROP TYPE IF EXISTS barber_category;
+DROP TYPE IF EXISTS subscription_status;
+DROP TYPE IF EXISTS day_of_week;
+
 -- tenants tablosu
 CREATE TABLE tenants (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -19,6 +23,7 @@ CREATE TABLE tenants (
 -- Berber kategorileri için ENUM tipi
 CREATE TYPE barber_category AS ENUM ('erkek_kuaforu', 'kadin_kuaforu', 'pet_kuaforu', 'oto_kuaforu');
 CREATE TYPE subscription_status AS ENUM ('active', 'trialing', 'past_due', 'canceled', 'unpaid');
+CREATE TYPE day_of_week AS ENUM ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
 
 -- barbers tablosu
 CREATE TABLE barbers (
@@ -40,6 +45,28 @@ CREATE TABLE barbers (
   
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- working_hours tablosu (berberlerin çalışma saatleri)
+CREATE TABLE working_hours (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  day_of_week day_of_week NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  UNIQUE (barber_id, day_of_week)
+);
+
+-- unavailable_dates tablosu (berberlerin müsait olmadığı tarihler)
+CREATE TABLE unavailable_dates (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  unavailable_date DATE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  UNIQUE (barber_id, unavailable_date)
 );
 
 -- customers tablosu
@@ -88,6 +115,16 @@ ALTER TABLE barbers ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to barbers" ON barbers FOR SELECT USING (true);
 -- Berberler kendi bilgilerini güncelleyebilir
 CREATE POLICY "Barbers can update their own profile" ON barbers FOR UPDATE USING (auth.uid() = user_id);
+
+-- working_hours tablosu için RLS
+ALTER TABLE working_hours ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to working hours" ON working_hours FOR SELECT USING (true);
+CREATE POLICY "Barbers can manage their own working hours" ON working_hours FOR ALL USING (barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid()));
+
+-- unavailable_dates tablosu için RLS
+ALTER TABLE unavailable_dates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to unavailable dates" ON unavailable_dates FOR SELECT USING (true);
+CREATE POLICY "Barbers can manage their own unavailable dates" ON unavailable_dates FOR ALL USING (barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid()));
 
 -- customers tablosu için RLS (sadece kendi bilgilerini görebilir ve güncelleyebilir)
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;

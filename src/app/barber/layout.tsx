@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import DashboardLayout from '@/components/templates/DashboardLayout';
-import { LayoutDashboard, Calendar, Settings, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Calendar, Settings, CreditCard, Clock } from 'lucide-react';
 
 export default async function BarberLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -21,6 +21,7 @@ export default async function BarberLayout({ children }: { children: React.React
   const barberNavItems = [
     { href: '/barber/dashboard', label: 'Anasayfa', icon: <LayoutDashboard /> },
     { href: '/barber/appointments', label: 'Randevular', icon: <Calendar /> },
+    { href: '/barber/working-hours', label: 'Çalışma Saatleri', icon: <Clock /> },
     { href: '/barber/subscription', label: 'Abonelik', icon: <CreditCard /> },
     { href: '/barber/settings', label: 'Ayarlar', icon: <Settings /> },
   ];
