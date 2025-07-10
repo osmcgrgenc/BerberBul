@@ -2,9 +2,6 @@ import LandingLayout from "@/components/templates/LandingLayout";
 import CTASection from "@/components/organisms/CTASection";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
 import { Button } from "@/components/ui/button";
-import PricingSection from "@/components/organisms/PricingSection";
-import FAQSection from "@/components/organisms/FAQSection";
-import ContactSection from "@/components/organisms/ContactSection";
 
 export default function Home() {
   return (
@@ -68,15 +65,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Pricing Section */}
-      <PricingSection />
-
-      {/* FAQ Section */}
-      <FAQSection />
-
-      {/* Contact Section */}
-      <ContactSection />
 
       {/* CTA Section */}
       <div className="animate-in fade-in zoom-in duration-700 delay-200">

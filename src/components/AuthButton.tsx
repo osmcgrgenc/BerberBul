@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
+import { User as UserIcon, LogOut } from 'lucide-react'
 
 export default function AuthButton() {
   const supabase = createClient()
@@ -28,25 +29,36 @@ export default function AuthButton() {
   }
 
   if (loading) {
-    return null // Or a loading spinner
+    return (
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-sm">Yükleniyor...</span>
+      </div>
+    )
   }
 
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 bg-secondary px-3 py-2 rounded-lg">
+        <UserIcon size={16} className="text-muted-foreground" />
+        <span className="text-sm font-medium text-secondary-foreground">
+          {user.email?.split('@')[0]}
+        </span>
+      </div>
       <button
-        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
         onClick={handleLogout}
+        className="flex items-center gap-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors"
       >
-        Logout
+        <LogOut size={16} />
+        Çıkış
       </button>
     </div>
   ) : (
     <a
       href="/login"
-      className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+      className="btn-primary text-sm"
     >
-      Login
+      Giriş Yap
     </a>
   )
 }

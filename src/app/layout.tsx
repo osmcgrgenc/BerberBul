@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
 import "./globals.css";
-import AuthButton from "@/components/AuthButton";
-import { Suspense } from "react";
-import Link from "next/link";
-import { TenantProvider } from "@/context/TenantContext";
-import { Toaster } from "@/components/ui/sonner"; // Toaster'ı import et
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-});
+import { ThemeProvider } from "@/context/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Berberbul - Multitenant SaaS Barber Booking Platform",
-  description: "A multitenant SaaS barber booking platform built with Next.js and Supabase.",
+  title: "BerberBul - Modern Berber Randevu Platformu",
+  description: "Yakınınızdaki en iyi berberleri keşfedin ve kolayca randevu alın. Modern, hızlı ve güvenilir berber randevu platformu.",
 };
 
 export default function RootLayout({
@@ -23,26 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${manrope.variable} font-sans antialiased`}
-      >
-        <TenantProvider>
-          <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-            <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-              <Link href="/">
-                <h1 className="font-bold text-lg">Berberbul</h1>
-              </Link>
-              <Suspense fallback={<div>Loading...</div>}>
-                <AuthButton />
-              </Suspense>
-            </div>
-          </nav>
-          <main className="min-h-screen flex flex-col items-center">
-            {children}
-          </main>
-        </TenantProvider>
-        <Toaster /> {/* Toaster bileşenini ekle */}
+    <html lang="tr">
+      <body className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 text-gray-900 font-sans">
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

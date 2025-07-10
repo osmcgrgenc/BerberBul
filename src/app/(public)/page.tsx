@@ -19,7 +19,7 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in delay-300">
           <Button asChild size="lg" className="text-lg shadow-lg hover:shadow-xl transition-all">
-            <a href="/signup">Hemen Başla</a>
+            <a href="/signup">Kayıt Ol</a>
           </Button>
           <Button asChild variant="outline" size="lg" className="text-lg shadow hover:shadow-lg transition-all">
             <a href="/login">Giriş Yap</a>
