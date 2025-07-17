@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useState, useEffect, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { createReview } from '@/app/(protected)/my-appointments/actions'; // Bir sonraki adımda oluşturulacak
+import { createReview } from '@/app/(customer)/my-appointments/actions';
 
 const initialState = {
   message: '',
@@ -20,13 +20,13 @@ function SubmitButton() {
 }
 
 interface ReviewFormProps {
-  barberId: string;
-  appointmentId: string;
+  barberId: number | string;
+  appointmentId: number | string;
 }
 
 export function ReviewForm({ barberId, appointmentId }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
-  const [state, formAction] = useFormState(createReview, initialState);
+  const [state, formAction] = useActionState(createReview, initialState);
 
   useEffect(() => {
     if (state?.message) {

@@ -43,7 +43,7 @@ export default function PricingSection() {
     <section className="py-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
       <h2 className="text-3xl font-bold text-center mb-10 text-emerald-700 dark:text-emerald-300">Fiyatlandırma</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        {plans.map((plan, i) => (
+        {plans.map((plan) => (
           <div
             key={plan.name}
             className={`rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center text-center hover:scale-105 hover:shadow-2xl transition-all duration-300 ${plan.highlight ? "ring-2 ring-emerald-400" : ""}`}

@@ -3,27 +3,20 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { cn } from '@/lib/utils';
-
-interface Service {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  duration_minutes: number;
-}
+import {Service} from "@/lib/types";
 
 interface ServiceSelectorProps {
   services: Service[];
-  onServiceSelect: (serviceId: string | null, duration: number | null) => void;
+  onServiceSelect: (serviceId: number | string, duration: number | null) => void;
 }
 
 export function ServiceSelector({ services, onServiceSelect }: ServiceSelectorProps) {
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | string>('');
 
   const handleSelect = (service: Service) => {
     if (selectedServiceId === service.id) {
-      setSelectedServiceId(null);
-      onServiceSelect(null, null);
+      setSelectedServiceId('');
+      onServiceSelect('', null);
     } else {
       setSelectedServiceId(service.id);
       onServiceSelect(service.id, service.duration_minutes);

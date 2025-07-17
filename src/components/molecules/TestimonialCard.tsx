@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FC } from "react";
 
 interface TestimonialCardProps {
@@ -10,7 +11,7 @@ interface TestimonialCardProps {
 const TestimonialCard: FC<TestimonialCardProps> = ({ name, role, text, avatar }) => (
   <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 flex flex-col items-center text-center border border-gray-100 dark:border-slate-800">
     {avatar ? (
-      <img src={avatar} alt={name} className="w-14 h-14 rounded-full mb-3 object-cover" />
+      <Image src={avatar} alt={name} width={56} height={56} className="w-14 h-14 rounded-full mb-3 object-cover" />
     ) : (
       <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center mb-3 text-2xl font-bold text-emerald-700 dark:text-emerald-300">
         {name[0]}
