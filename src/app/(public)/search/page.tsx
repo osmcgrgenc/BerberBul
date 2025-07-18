@@ -4,12 +4,25 @@ import { SearchForm } from './_components/SearchForm';
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const supabase = await createClient();
-  const category = (await searchParams).category as string || 'all';
+  const params = await searchParams;
+  const category = params.category as string || 'all';
+  const location = params.location as string | undefined;
+  const service = params.service as string | undefined;
 
-  let query = supabase.from('barbers').select('*');
+  let query = supabase
+    .from('barbers')
+    .select('id, name, slug, bio, address, category, services(name)');
 
   if (category && category !== 'all') {
     query = query.eq('category', category);
+  }
+
+  if (location) {
+    query = query.ilike('address', `%${location}%`);
+  }
+
+  if (service) {
+    query = query.ilike('services.name', `%${service}%`);
   }
 
   const { data: barbers, error } = await query;

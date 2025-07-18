@@ -13,9 +13,36 @@ export function SearchForm() {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const handleInputChange = (
+    key: 'location' | 'service',
+    value: string
+  ) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-soft mb-8">
       <div className="flex flex-col md:flex-row items-center gap-4">
+        <input
+          type="text"
+          placeholder="Konum"
+          defaultValue={searchParams.get('location') || ''}
+          onChange={(e) => handleInputChange('location', e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        />
+        <input
+          type="text"
+          placeholder="Hizmet"
+          defaultValue={searchParams.get('service') || ''}
+          onChange={(e) => handleInputChange('service', e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        />
         <select
           onChange={handleCategoryChange}
           defaultValue={searchParams.get('category') || 'all'}
