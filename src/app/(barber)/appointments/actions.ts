@@ -38,7 +38,7 @@ export async function updateAppointmentStatus(formData: FormData) {
     .eq('id', appointmentId)
     .single();
 
-  const customerEmail = appointment?.customers?.email;
+  const customerEmail = appointment?.customers?.[0]?.email;
   if (customerEmail) {
     await notifyCustomer(customerEmail, status);
   }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { format, parseISO, getDay, setHours, setMinutes, isBefore, addMinutes, isToday } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { WorkingHour } from '@/lib/types';
 
 enum DayOfWeek {
   SUNDAY = 'sunday',
@@ -15,12 +16,6 @@ enum DayOfWeek {
   THURSDAY = 'thursday',
   FRIDAY = 'friday',
   SATURDAY = 'saturday',
-}
-
-interface WorkingHour {
-  day_of_week: DayOfWeek | string;
-  start_time: string;
-  end_time: string;
 }
 
 interface AppointmentSchedulerProps {
