@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { ServiceSelector } from '@/components/molecules/ServiceSelector';
 import { AppointmentScheduler } from '@/components/organisms/AppointmentScheduler';
 import { createAppointment } from '../actions';
-import { Service } from "@/lib/types";
-
-interface WorkingHour {
-  day_of_week: string;
-  start_time: string;
-  end_time: string;
-}
+import { Service, WorkingHour } from '@/lib/types';
 
 interface AppointmentBookingFormProps {
   barberId: number;

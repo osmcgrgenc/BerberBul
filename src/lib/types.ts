@@ -37,9 +37,7 @@ export interface Review {
   rating: number;
   comment: string;
   created_at: string;
-  customers: {
-    name: string;
-  };
+  customers: Customer[];
   review_responses?: ReviewResponse[];
 }
 
@@ -51,8 +49,8 @@ export interface ReviewResponse {
 
 export interface Customer {
   name: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface Appointment {

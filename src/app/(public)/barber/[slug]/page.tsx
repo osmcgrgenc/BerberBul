@@ -139,7 +139,7 @@ export default async function BarberProfilePage({ params, searchParams }: PagePr
             {reviews.map((review: Review) => (
               <div key={review.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">{review.customers.name}</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">{review.customers?.[0]?.name}</span>
                   <span className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(review.created_at), 'dd.MM.yyyy')}</span>
                 </div>
                 <div className="flex items-center mt-1">
