@@ -52,8 +52,9 @@ CREATE TABLE working_hours (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
   day_of_week day_of_week NOT NULL,
-  start_time TIME NOT NULL,
-  end_time TIME NOT NULL,
+  start_time TIME,
+  end_time TIME,
+  is_closed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   UNIQUE (barber_id, day_of_week)

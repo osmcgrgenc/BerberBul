@@ -87,8 +87,8 @@ export function WorkingHoursForm({ initialWorkingHours, barberId }: { initialWor
       {daysOfWeek.map(day => {
         const currentHours = workingHours.find(wh => wh.day_of_week === day.key);
         const isClosed = currentHours?.is_closed || false;
-        const startTime = currentHours?.start_time || '09:00';
-        const endTime = currentHours?.end_time || '18:00';
+        const startTime = currentHours?.start_time ?? '09:00';
+        const endTime = currentHours?.end_time ?? '18:00';
 
         return (
           <div key={day.key} className="flex items-center gap-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">

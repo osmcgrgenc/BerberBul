@@ -1,14 +1,16 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { WorkingHoursForm } from './_components/WorkingHoursForm';
+import { UnavailableDatesForm } from './_components/UnavailableDatesForm';
 
 interface WorkingHour {
   id?: string;
   day_of_week: string;
-  start_time: string;
-  end_time: string;
-  is_closed: boolean; // Yeni alan
+  start_time: string | null;
+  end_time: string | null;
+  is_closed: boolean;
 }
+
 
 export default async function WorkingHoursPage() {
   const supabase = await createClient();
@@ -46,10 +48,28 @@ export default async function WorkingHoursPage() {
     is_closed: (wh as WorkingHour).is_closed || false, // is_closed alanı yoksa false varsay
   })) || [];
 
+  const { data: unavailableDates, error: udError } = await supabase
+    .from('unavailable_dates')
+    .select('unavailable_date')
+    .eq('barber_id', barber.id);
+
+  if (udError) {
+    console.error('Error fetching unavailable dates:', udError);
+    return <div>Özel günler yüklenirken bir hata oluştu.</div>;
+  }
+
+  const initialUnavailableDates = unavailableDates?.map(d => d.unavailable_date) || [];
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Çalışma Saatleri Yönetimi</h1>
-      <WorkingHoursForm initialWorkingHours={initialWorkingHoursWithClosed} barberId={barber.id} />
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold mb-4">Çalışma Saatleri Yönetimi</h1>
+        <WorkingHoursForm initialWorkingHours={initialWorkingHoursWithClosed} barberId={barber.id} />
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Özel Günler</h2>
+        <UnavailableDatesForm initialDates={initialUnavailableDates} barberId={barber.id} />
+      </div>
     </div>
   );
 }
