@@ -18,7 +18,7 @@ const categoryTranslations: { [key: string]: string } = {
 
 export function BarberCard({ slug, name, description, address, category }: BarberCardProps) {
   return (
-    <Link href={`/berber/${slug}`} className="block hover:scale-105 transition-transform duration-200">
+    <Link href={`/barber/${slug}`} className="block hover:scale-105 transition-transform duration-200">
       <Card className="h-full flex flex-col">
         <CardHeader>
           <CardTitle>{name}</CardTitle>

@@ -118,6 +118,16 @@ CREATE TABLE reviews (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+-- review_responses tablosu
+CREATE TABLE review_responses (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  review_id UUID REFERENCES reviews(id) ON DELETE CASCADE UNIQUE,
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  response_text TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 -- barber_gallery tablosu
 CREATE TABLE barber_gallery (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -173,6 +183,11 @@ ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to reviews" ON reviews FOR SELECT USING (true);
 CREATE POLICY "Customers can insert their own reviews" ON reviews FOR INSERT WITH CHECK (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
 CREATE POLICY "Customers can update their own reviews" ON reviews FOR UPDATE USING (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
+
+-- review_responses tablosu için RLS
+ALTER TABLE review_responses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to review responses" ON review_responses FOR SELECT USING (true);
+CREATE POLICY "Barbers can manage their own review responses" ON review_responses FOR ALL USING (barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid()));
 
 -- barber_gallery tablosu için RLS
 ALTER TABLE barber_gallery ENABLE ROW LEVEL SECURITY;

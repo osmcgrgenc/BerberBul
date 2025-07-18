@@ -40,6 +40,13 @@ export interface Review {
   customers: {
     name: string;
   };
+  review_responses?: ReviewResponse[];
+}
+
+export interface ReviewResponse {
+  id: number;
+  response_text: string;
+  created_at: string;
 }
 
 export interface Customer {
