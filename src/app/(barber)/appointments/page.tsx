@@ -5,8 +5,14 @@ import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { updateAppointmentStatus } from './actions';
 import { Button } from '@/components/ui/button';
+import { StatusFilter } from './_components/StatusFilter';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle, XCircle } from 'lucide-react';
 
-export default async function BarberAppointmentsPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+export default async function BarberAppointmentsPage({ searchParams }: PageProps) {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -26,7 +32,10 @@ export default async function BarberAppointmentsPage() {
     return <div>Berber bilgileri yüklenirken bir hata oluştu.</div>;
   }
 
-  const { data: appointments, error: appointmentsError } = await supabase
+  const { success, error, status } = await searchParams;
+  const filterStatus = typeof status === 'string' ? status : 'all';
+
+  let query = supabase
     .from('appointments')
     .select(
       `
@@ -35,17 +44,47 @@ export default async function BarberAppointmentsPage() {
       services ( name, price, duration_minutes )
       `
     )
-    .eq('barber_id', barberData.id)
-    .order('appointment_time', { ascending: false });
+    .eq('barber_id', barberData.id);
+
+  if (filterStatus && filterStatus !== 'all') {
+    query = query.eq('status', filterStatus);
+  }
+
+  const { data: appointments, error: appointmentsError } = await query.order('appointment_time', { ascending: false });
 
   if (appointmentsError) {
     console.error('Error fetching appointments:', appointmentsError);
     return <div>Randevular yüklenirken bir hata oluştu.</div>;
   }
 
+  const getMessage = () => {
+    if (success === 'updated') {
+      return { type: 'success' as const, message: 'Randevu durumu güncellendi!' };
+    }
+    if (error === 'update_failed') {
+      return { type: 'error' as const, message: 'Randevu güncellenirken bir hata oluştu.' };
+    }
+    return null;
+  };
+
+  const message = getMessage();
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Gelen Randevular</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Randevular</h1>
+      {message && (
+        <Alert className={`mb-4 ${message.type === 'success' ? 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800' : 'border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800'}`}> 
+          {message.type === 'success' ? (
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          ) : (
+            <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+          )}
+          <AlertDescription className={message.type === 'success' ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}>
+            {message.message}
+          </AlertDescription>
+        </Alert>
+      )}
+      <StatusFilter currentStatus={filterStatus} />
       {appointments && appointments.length > 0 ? (
         <div className="space-y-4">
           {appointments.map((appointment: Appointment) => (
