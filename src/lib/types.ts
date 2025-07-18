@@ -23,8 +23,13 @@ export interface Service {
 
 export interface WorkingHour {
   day_of_week: string;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
+  is_closed?: boolean;
+}
+
+export interface UnavailableDate {
+  unavailable_date: string;
 }
 
 export interface Review {
