@@ -19,6 +19,11 @@ export default function BarberSidebar() {
             </Link>
           </li>
           <li className="mb-2">
+            <Link href="/services" className="hover:text-blue-400 transition-colors">
+              Hizmetler
+            </Link>
+          </li>
+          <li className="mb-2">
             <Link href="/settings" className="hover:text-blue-400 transition-colors">
               Dükkan Ayarları
             </Link>
