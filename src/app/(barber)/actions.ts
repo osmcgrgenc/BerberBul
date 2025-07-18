@@ -237,3 +237,77 @@ export async function deleteStaff(barberId: number, staffId: string) {
   revalidatePath('/barber/settings');
   return { message: 'Personel başarıyla silindi!' };
 }
+
+export async function uploadGalleryImages(prevState: { message: string }, formData: FormData) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { message: 'Yetkisiz erişim.' };
+  }
+
+  const barberId = formData.get('barberId') as string;
+  const files = formData.getAll('images') as File[];
+
+  for (const file of files) {
+    const filePath = `${barberId}/${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage.from('gallery').upload(filePath, Buffer.from(await file.arrayBuffer()), {
+      contentType: file.type,
+    });
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      return { message: 'Fotoğraf yüklenirken bir hata oluştu.' };
+    }
+
+    const { error: insertError } = await supabase
+      .from('barber_gallery')
+      .insert({ barber_id: barberId, image_path: filePath });
+    if (insertError) {
+      console.error('Error inserting gallery record:', insertError);
+      return { message: 'Fotoğraf kayıt edilirken bir hata oluştu.' };
+    }
+  }
+
+  revalidatePath('/barber/gallery');
+  return { message: 'Fotoğraflar başarıyla yüklendi!' };
+}
+
+export async function deleteGalleryImage(barberId: string, imageId: string, imagePath: string) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { message: 'Yetkisiz erişim.' };
+  }
+
+  const { data: barber, error: barberError } = await supabase
+    .from('barbers')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('id', barberId)
+    .single();
+
+  if (barberError || !barber) {
+    console.error('Barber yetkilendirme hatası:', barberError);
+    return { message: 'Yetkisiz işlem.' };
+  }
+
+  const { error: storageError } = await supabase.storage.from('gallery').remove([imagePath]);
+  if (storageError) {
+    console.error('Error deleting from storage:', storageError);
+  }
+
+  const { error } = await supabase
+    .from('barber_gallery')
+    .delete()
+    .eq('id', imageId)
+    .eq('barber_id', barberId);
+
+  if (error) {
+    console.error('Error deleting gallery record:', error);
+    return { message: 'Fotoğraf silinirken bir hata oluştu.' };
+  }
+
+  revalidatePath('/barber/gallery');
+  return { message: 'Fotoğraf başarıyla silindi!' };
+}

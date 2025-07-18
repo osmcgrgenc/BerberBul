@@ -117,6 +117,14 @@ CREATE TABLE reviews (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+-- barber_gallery tablosu
+CREATE TABLE barber_gallery (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  image_path TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 -- RLS (Row Level Security) Politikaları
 -- tenants tablosu için RLS
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
@@ -164,6 +172,11 @@ ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to reviews" ON reviews FOR SELECT USING (true);
 CREATE POLICY "Customers can insert their own reviews" ON reviews FOR INSERT WITH CHECK (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
 CREATE POLICY "Customers can update their own reviews" ON reviews FOR UPDATE USING (customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid()));
+
+-- barber_gallery tablosu için RLS
+ALTER TABLE barber_gallery ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to barber gallery" ON barber_gallery FOR SELECT USING (true);
+CREATE POLICY "Barbers can manage their own gallery" ON barber_gallery FOR ALL USING (barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid()));
 
 -- Örnek kiracı ekleme
 INSERT INTO tenants (slug, name) VALUES ('ahmetkuafor', 'Ahmet Kuaför');
