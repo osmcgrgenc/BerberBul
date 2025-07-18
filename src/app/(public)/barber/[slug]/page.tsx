@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { AppointmentBookingForm } from './_components/AppointmentBookingForm';
 import { Service, WorkingHour, Review, Barber } from '@/lib/types';
 import { Star, CheckCircle, XCircle } from 'lucide-react';
+import FavoriteButton from './_components/FavoriteButton';
 import { format } from 'date-fns';
 import { PostgrestError } from "@supabase/supabase-js";
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -42,16 +43,53 @@ export default async function BarberProfilePage({ params, searchParams }: PagePr
         message: 'Randevunuz başarıyla oluşturuldu!'
       };
     }
+    if (success === 'favorite-added') {
+      return {
+        type: 'success' as const,
+        message: 'Berber favorilerinize eklendi!'
+      };
+    }
+    if (success === 'favorite-removed') {
+      return {
+        type: 'success' as const,
+        message: 'Favorilerden kaldırıldı!'
+      };
+    }
     if (urlError === 'appointment-failed') {
       return {
         type: 'error' as const,
         message: 'Randevu oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.'
       };
     }
+    if (urlError === 'favorite-failed') {
+      return {
+        type: 'error' as const,
+        message: 'Favori işlemi sırasında bir hata oluştu.'
+      };
+    }
     return null;
   };
 
   const message = getMessage();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  let isFavorite = false;
+  if (user) {
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    if (customer) {
+      const { data: fav } = await supabase
+        .from('customer_favorites')
+        .select('id')
+        .eq('customer_id', customer.id)
+        .eq('barber_id', barber.id)
+        .single();
+      isFavorite = !!fav;
+    }
+  }
 
   const reviews = barber.reviews || [];
   const averageRating = reviews.length > 0
@@ -67,6 +105,11 @@ export default async function BarberProfilePage({ params, searchParams }: PagePr
         <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">{averageRating}</span>
         <span className="text-gray-600 dark:text-gray-400">({reviews.length} yorum)</span>
       </div>
+      {user && (
+        <div className="mt-4">
+          <FavoriteButton barberId={barber.id.toString()} barberSlug={barber.slug} isFavorite={isFavorite} />
+        </div>
+      )}
 
       {message && (
         <Alert className={`mt-4 ${message.type === 'success' ? 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800' : 'border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800'}`}>

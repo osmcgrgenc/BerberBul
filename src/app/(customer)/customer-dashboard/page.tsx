@@ -116,7 +116,7 @@ export default function DashboardPage() { // async kaldırıldı
               </Link>
             </li>
             <li className="mb-4">
-              <Link href="/customer-dashboard/favorites" className="flex items-center gap-3 text-foreground hover:text-primary font-medium">
+              <Link href="/favorites" className="flex items-center gap-3 text-foreground hover:text-primary font-medium">
                 <Heart size={20} /> Favorites
               </Link>
             </li>
@@ -163,7 +163,7 @@ export default function DashboardPage() { // async kaldırıldı
             <Link href="/search" className="inline-block bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded-2xl shadow-soft text-center transition duration-300">
               Yeni Randevu Al
             </Link>
-            <Link href="/dashboard/favorites" className="inline-block bg-secondary hover:bg-secondary-dark text-foreground font-bold py-2 px-4 rounded-2xl shadow-soft text-center transition duration-300">
+            <Link href="/favorites" className="inline-block bg-secondary hover:bg-secondary-dark text-foreground font-bold py-2 px-4 rounded-2xl shadow-soft text-center transition duration-300">
               Favori Berberlerim
             </Link>
           </div>
