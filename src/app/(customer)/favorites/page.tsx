@@ -75,8 +75,8 @@ export default async function FavoritesPage({ searchParams }: PageProps) {
         <ul className="space-y-4">
           {favorites.map((fav) => (
             <li key={fav.barber_id} className="flex items-center justify-between bg-card p-4 rounded-lg shadow-soft">
-              <Link href={`/barber/${fav.barbers.slug}`} className="font-medium hover:underline">
-                {fav.barbers.name}
+              <Link href={`/barber/${fav.barbers?.[0]?.slug}`} className="font-medium hover:underline">
+                {fav.barbers?.[0]?.name}
               </Link>
               <form action={removeFavorite}>
                 <input type="hidden" name="barberId" value={fav.barber_id} />
