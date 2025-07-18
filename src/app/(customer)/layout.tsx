@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import DashboardLayout from '@/components/templates/DashboardLayout';
-import { LayoutDashboard, User, Calendar } from 'lucide-react';
+import { LayoutDashboard, User, Calendar, Heart } from 'lucide-react';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -15,6 +15,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   const customerNavItems = [
     { href: '/customer-dashboard', label: 'Anasayfa', icon: <LayoutDashboard /> },
     { href: '/profile', label: 'Profilim', icon: <User /> },
+    { href: '/favorites', label: 'Favorilerim', icon: <Heart /> },
     { href: '/my-appointments', label: 'Randevularım', icon: <Calendar /> },
   ];
 
