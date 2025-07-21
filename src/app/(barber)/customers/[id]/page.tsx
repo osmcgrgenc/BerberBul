@@ -3,9 +3,10 @@ import { redirect, notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import NoteForm from '../_components/NoteForm';
 
-interface PageProps { params: { id: string } }
+interface PageProps { params: Promise<{ id: string }> }
 
 export default async function CustomerDetailPage({ params }: PageProps) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,7 +28,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
   const { data: customer, error: custError } = await supabase
     .from('customers')
     .select('id, name, email, phone')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (custError || !customer) {
@@ -37,14 +38,17 @@ export default async function CustomerDetailPage({ params }: PageProps) {
   const { data: appointments } = await supabase
     .from('appointments')
     .select('appointment_time, services ( name, price )')
-    .eq('customer_id', params.id)
+    .eq('customer_id', id)
     .eq('barber_id', barber.id)
     .order('appointment_time', { ascending: false });
+
+  type Appt = { appointment_time: string; services: { name: string; price: number } };
+  const typedAppointments: Appt[] = (appointments as unknown as Appt[]) || [];
 
   const { data: notes } = await supabase
     .from('customer_notes')
     .select('*')
-    .eq('customer_id', params.id)
+    .eq('customer_id', id)
     .eq('barber_id', barber.id)
     .order('created_at', { ascending: false });
 
@@ -56,9 +60,9 @@ export default async function CustomerDetailPage({ params }: PageProps) {
 
       <section>
         <h2 className="text-xl font-semibold mb-2">Randevu Geçmişi</h2>
-        {appointments && appointments.length > 0 ? (
+        {typedAppointments && typedAppointments.length > 0 ? (
           <ul className="space-y-2">
-            {appointments.map(appt => (
+            {typedAppointments.map(appt => (
               <li key={appt.appointment_time} className="border rounded p-2">
                 {format(new Date(appt.appointment_time), 'dd.MM.yyyy')} - {appt.services.name} (₺{appt.services.price})
               </li>
