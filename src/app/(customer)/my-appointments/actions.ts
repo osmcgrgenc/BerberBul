@@ -73,12 +73,30 @@ export async function createReview(prevState: { message: string }, formData: For
     return { message: 'Gerekli bilgiler eksik.' };
   }
 
+  // Müşteri ID'sini al
+  const { data: customerData, error: customerError } = await supabase
+    .from('customers')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (customerError || !customerData) {
+    console.error('Error fetching customer ID:', customerError);
+    return { message: 'Müşteri bilgileri alınamadı.' };
+  }
+
+  const { data: barberData } = await supabase
+    .from('barbers')
+    .select('slug')
+    .eq('id', barberId)
+    .single();
+
   // Review'ı veritabanına kaydet
   const { error } = await supabase
     .from('reviews')
     .insert({
       barber_id: barberId,
-      customer_id: user.id,
+      customer_id: customerData.id,
       appointment_id: appointmentId,
       rating,
       comment,
@@ -91,6 +109,9 @@ export async function createReview(prevState: { message: string }, formData: For
   }
 
   revalidatePath('/my-appointments');
+  if (barberData?.slug) {
+    revalidatePath(`/barber/${barberData.slug}`);
+  }
 
   return { message: 'Yorumunuz başarıyla kaydedildi!' };
 }
