@@ -11,6 +11,7 @@ BerberBul, berberler (erkek, kadın, pet, oto kuaförleri) ile müşterileri bir
 -   **Abonelik Sistemi:** Berberler için abonelik yönetimi ve planları (sahte entegrasyon).
 -   **Randevu Sistemi:** Müşterilerin hizmet seçerek randevu alabilmesi, berberlerin randevuları yönetebilmesi (onaylama, reddetme, tamamlama).
 -   **Değerlendirme ve Yorum Sistemi:** Müşterilerin tamamlanmış randevular sonrası berberleri değerlendirebilmesi ve yorum yapabilmesi.
+-   **Personel Yönetimi:** İşletme sahiplerinin çalışan ekleyip roller atayabildiği personel modülü.
 
 ## Teknolojiler
 

@@ -238,6 +238,41 @@ CREATE POLICY "Customers manage their own favorites" ON customer_favorites FOR A
   customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid())
 );
 
+-- personel rollerini tanımla
+CREATE TYPE staff_role AS ENUM ('owner', 'employee');
+
+-- staff tablosu
+CREATE TABLE staff (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id),
+  email TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT,
+  role staff_role NOT NULL DEFAULT 'employee',
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  UNIQUE (barber_id, email)
+);
+
+-- staff tablosu için RLS
+ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Staff can view own record" ON staff FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Owners manage staff" ON staff FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM staff s2
+    WHERE s2.user_id = auth.uid()
+      AND s2.role = 'owner'
+      AND s2.barber_id = staff.barber_id
+  )
+) WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM staff s2
+    WHERE s2.user_id = auth.uid()
+      AND s2.role = 'owner'
+      AND s2.barber_id = staff.barber_id
+  )
 -- customer_notes tablosu için RLS
 ALTER TABLE customer_notes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Barbers manage their own customer notes" ON customer_notes FOR ALL USING (
