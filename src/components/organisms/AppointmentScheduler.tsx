@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { format, parseISO, getDay, setHours, setMinutes, isBefore, addMinutes, isToday } from 'date-fns';
+import { format, parseISO, getDay, setHours, setMinutes, isAfter, addMinutes, isToday } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { WorkingHour } from '@/lib/types';
@@ -82,7 +82,7 @@ export function AppointmentScheduler({ workingHours, selectedServiceDuration, on
       const currentHour = isCurrentDay ? now.getHours() : 0;
       const currentMinute = isCurrentDay ? now.getMinutes() : 0;
 
-      while (isBefore(currentTime, end)) {
+      while (!isAfter(addMinutes(currentTime, selectedServiceDuration), end)) {
         const timeSlot = format(currentTime, 'HH:mm');
         const [hour, minute] = timeSlot.split(':').map(Number);
         
@@ -95,7 +95,7 @@ export function AppointmentScheduler({ workingHours, selectedServiceDuration, on
           times.push(timeSlot);
         }
         
-        currentTime = addMinutes(currentTime, selectedServiceDuration || 30); // Varsayılan 30 dk
+        currentTime = addMinutes(currentTime, selectedServiceDuration);
       }
       
       setAvailableTimes(times);
