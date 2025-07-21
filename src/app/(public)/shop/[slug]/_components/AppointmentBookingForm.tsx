@@ -5,6 +5,7 @@ import { ServiceSelector } from '@/components/molecules/ServiceSelector';
 import { AppointmentScheduler } from '@/components/organisms/AppointmentScheduler';
 import { createAppointment } from '../actions';
 import { Service, WorkingHour } from '@/lib/types';
+import { createClient } from '@/lib/supabase/client';
 
 interface AppointmentBookingFormProps {
   barberId: number;
@@ -23,10 +24,36 @@ export function AppointmentBookingForm({
 }: AppointmentBookingFormProps) {
   const [selectedServiceId, setSelectedServiceId] = useState<string | number>('');
   const [selectedServiceDuration, setSelectedServiceDuration] = useState<number | null>(null);
+  const [selectedServicePrice, setSelectedServicePrice] = useState<number | null>(null);
 
-  const handleServiceSelect = (serviceId: string | number, duration: number | null) => {
+  const handleServiceSelect = async (serviceId: string | number, duration: number | null) => {
     setSelectedServiceId(serviceId);
     setSelectedServiceDuration(duration);
+
+    if (!serviceId) {
+      setSelectedServicePrice(null);
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('services')
+        .select('price')
+        .eq('id', serviceId)
+        .single();
+
+      if (error) {
+        console.error('Service price fetch error:', error.message);
+        setSelectedServicePrice(null);
+        return;
+      }
+
+      setSelectedServicePrice(data?.price ?? null);
+    } catch (err) {
+      console.error('Service price fetch error:', err);
+      setSelectedServicePrice(null);
+    }
   };
 
   const handleCreateAppointment = async (appointmentTime: Date) => {
@@ -52,6 +79,11 @@ export function AppointmentBookingForm({
           <ServiceSelector services={services} onServiceSelect={handleServiceSelect} />
         ) : (
           <p className="text-gray-600 dark:text-gray-400">Bu berberin henüz tanımlanmış bir hizmeti bulunmamaktadır.</p>
+        )}
+        {selectedServicePrice !== null && (
+          <p className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Toplam Fiyat: ₺{selectedServicePrice}
+          </p>
         )}
       </div>
 
