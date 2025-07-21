@@ -10,7 +10,9 @@ import { Label } from '@/components/ui/label';
 export type StaffFormValues = {
   id?: string; // Düzenleme için gerekli, ancak şimdilik sadece ekleme/silme
   name: string;
-  specialty?: string; // Uzmanlık alanı opsiyonel
+  email: string;
+  phone?: string;
+  role: 'owner' | 'employee';
 };
 
 interface StaffFormProps {
@@ -33,8 +35,20 @@ export default function StaffForm({ initialData, onSubmit, onCancel, isSubmittin
         {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
       </div>
       <div>
-        <Label htmlFor="specialty">Uzmanlık Alanı (Opsiyonel)</Label>
-        <Input id="specialty" {...register('specialty')} />
+        <Label htmlFor="email">E-posta</Label>
+        <Input id="email" type="email" {...register('email', { required: 'E-posta zorunludur.' })} />
+        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+      </div>
+      <div>
+        <Label htmlFor="phone">Telefon (Opsiyonel)</Label>
+        <Input id="phone" {...register('phone')} />
+      </div>
+      <div>
+        <Label htmlFor="role">Rol</Label>
+        <select id="role" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600" {...register('role', { required: true })}>
+          <option value="employee">Personel</option>
+          <option value="owner">İşletme Sahibi</option>
+        </select>
       </div>
       <div className="flex gap-2">
         <Button type="submit" disabled={isSubmitting}>

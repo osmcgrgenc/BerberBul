@@ -122,15 +122,29 @@ function ServicesTab({ initialServices, barberId }: { initialServices: Service[]
 }
 
 function StaffTab({ barberId }: { barberId: number }) {
-  const [staff, setStaff] = useState<{ id: string; name: string; specialty?: string }[]>([]);
+  const supabase = createClient();
+  const [staff, setStaff] = useState<{ id: string; name: string; email: string; role: string; is_active: boolean }[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchStaff() {
+      const { data, error } = await supabase
+        .from('staff')
+        .select('id, name, email, role, is_active')
+        .eq('barber_id', barberId);
+      if (!error && data) {
+        setStaff(data);
+      }
+    }
+    fetchStaff();
+  }, [barberId, supabase]);
 
   const handleAddStaff = async (data: StaffFormValues) => {
     const result = await addStaff(barberId, data);
-    if (result.message.includes('başarıyla')) {
+    if (result.message.includes('başarıyla') && result.staff) {
       toast.success(result.message);
       setIsFormOpen(false);
-      setStaff(prev => [...prev, { ...data, id: Date.now().toString() }]); // Geçici ID
+      setStaff(prev => [...prev, result.staff]);
     } else {
       toast.error(result.message);
     }
@@ -160,7 +174,7 @@ function StaffTab({ barberId }: { barberId: number }) {
             <div key={person.id} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
               <div>
                 <p className="font-medium text-gray-900 dark:text-gray-100">{person.name}</p>
-                {person.specialty && <p className="text-sm text-gray-600 dark:text-gray-400">{person.specialty}</p>}
+                <p className="text-sm text-gray-600 dark:text-gray-400">{person.email} - {person.role}</p>
               </div>
               <Button variant="destructive" size="sm" onClick={() => handleDeleteStaff(person.id)}>
                 Kaldır

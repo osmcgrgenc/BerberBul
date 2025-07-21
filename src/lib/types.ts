@@ -62,3 +62,14 @@ export interface Appointment {
   reviews: Review[];
   customers: Customer;
 }
+
+export interface Staff {
+  id: string;
+  barber_id: string;
+  user_id?: string;
+  email: string;
+  name: string;
+  phone?: string;
+  role: 'owner' | 'employee';
+  is_active: boolean;
+}

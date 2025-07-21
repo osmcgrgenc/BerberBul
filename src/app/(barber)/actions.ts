@@ -185,10 +185,13 @@ export async function addStaff(barberId: number, staffData: StaffFormValues) {
 
   const { data, error } = await supabase
     .from('staff') // 'staff' tablosuna ekleme yapıyoruz
-    .insert({ 
-      barber_id: barberId, 
-      name: staffData.name, 
-      specialty: staffData.specialty 
+    .insert({
+      barber_id: barberId,
+      name: staffData.name,
+      email: staffData.email,
+      phone: staffData.phone,
+      role: staffData.role,
+      is_active: true
     })
     .select()
     .single();
@@ -225,7 +228,7 @@ export async function deleteStaff(barberId: number, staffId: string) {
 
   const { error } = await supabase
     .from('staff')
-    .delete()
+    .update({ is_active: false })
     .eq('id', staffId)
     .eq('barber_id', barberId); // Güvenlik için barber_id kontrolü
 
