@@ -32,6 +32,7 @@ export function SearchForm() {
         <input
           type="text"
           placeholder="Konum"
+          aria-label="Konum"
           defaultValue={searchParams.get('location') || ''}
           onChange={(e) => handleInputChange('location', e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -39,6 +40,7 @@ export function SearchForm() {
         <input
           type="text"
           placeholder="Hizmet"
+          aria-label="Hizmet"
           defaultValue={searchParams.get('service') || ''}
           onChange={(e) => handleInputChange('service', e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"

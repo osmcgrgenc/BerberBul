@@ -70,7 +70,7 @@ export default function DashboardLayout({ children, navItems, title }: Dashboard
           </div>
         </header>
         
-        <main className="flex-1 p-4 sm:p-6">
+        <main id="content" className="flex-1 p-4 sm:p-6">
           {children}
         </main>
       </div>
