@@ -33,7 +33,7 @@ export async function updateCustomerProfile(prevState: { message: string }, form
   // Update customer profile in 'customers' table
   const { error } = await supabase
     .from('customers')
-    .update({ name, phone })
+    .update({ name, phone, email })
     .eq('user_id', user.id)
     .select()
     .single();
