@@ -18,6 +18,19 @@ export async function createAppointment(formData: FormData) {
   const appointmentTime = formData.get('appointmentTime') as string;
   const tenantId = formData.get('tenantId') as string;
 
+  // Aynı berber ve zaman için çakışan randevu var mı kontrol et
+  const { data: existingAppointment } = await supabase
+    .from('appointments')
+    .select('id')
+    .eq('barber_id', barberId)
+    .eq('appointment_time', appointmentTime)
+    .neq('status', 'cancelled')
+    .maybeSingle();
+
+  if (existingAppointment) {
+    redirect(`/barber/${formData.get('barberSlug')}?error=appointment-conflict`);
+  }
+
   // Müşteri ID'sini al
   const { data: customerData, error: customerError } = await supabase
     .from('customers')
