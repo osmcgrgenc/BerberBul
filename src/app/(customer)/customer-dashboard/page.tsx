@@ -140,7 +140,10 @@ export default function DashboardPage() { // async kaldırıldı
           ) : (
             <ul className="list-none p-0">
               {appointments.map((appointment: Appointment) => (
-                <li key={appointment.id} className="mb-4 p-4 rounded-lg shadow-soft bg-background">
+                <li
+                  key={appointment.id}
+                  className="mb-4 p-4 rounded-lg bg-background shadow-neumorphic dark:shadow-neumorphic-dark"
+                >
                   <p className="font-semibold text-foreground">
                     {appointment.barbers?.name} - {appointment.services?.name}
                   </p>

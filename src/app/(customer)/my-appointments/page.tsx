@@ -92,7 +92,10 @@ export default async function MyAppointmentsPage({ searchParams }: PageProps) {
       {appointments && appointments.length > 0 ? (
         <div className="space-y-4">
           {appointments.map((appointment: Appointment) => (
-            <div key={appointment.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div
+              key={appointment.id}
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-neumorphic dark:shadow-neumorphic-dark"
+            >
               <h2 className="text-xl font-semibold">{appointment.barbers.name}</h2>
               <p className="text-gray-600 dark:text-gray-400">{appointment.barbers.address}</p>
               <p className="mt-2">Hizmet: <span className="font-medium">{appointment.services.name}</span></p>
