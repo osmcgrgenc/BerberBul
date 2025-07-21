@@ -29,6 +29,7 @@
     "react-day-picker": "^9.8.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.60.0",
+    "recharts": "^2.9.0",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "sonner": "^2.0.6",
