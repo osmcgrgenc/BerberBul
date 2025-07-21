@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ServiceForm, { ServiceFormValues } from '@/app/(barber)/_components/ServiceForm';
 import StaffForm, { StaffFormValues } from '@/app/(barber)/_components/StaffForm';
+import { createClient } from '@/lib/supabase/client';
 
 const initialState = {
   message: '',

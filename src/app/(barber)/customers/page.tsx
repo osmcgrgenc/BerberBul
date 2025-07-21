@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 interface AppointmentRow {
   customer_id: string;
   appointment_time: string;
-  services: { price: number };
+  services: { price: number }[];
   customers: { id: string; name: string; phone: string }[];
 }
 
@@ -43,13 +43,14 @@ export default async function CustomersPage() {
 
   rows?.forEach((row: AppointmentRow) => {
     const cust = row.customers[0];
-    if (!cust) return;
+    const service = row.services[0];
+    if (!cust || !service) return;
     if (!map.has(cust.id)) {
-      map.set(cust.id, { id: cust.id, name: cust.name, phone: cust.phone, last: row.appointment_time, total: row.services.price });
+      map.set(cust.id, { id: cust.id, name: cust.name, phone: cust.phone, last: row.appointment_time, total: service.price });
     } else {
       const obj = map.get(cust.id)!;
       if (new Date(row.appointment_time) > new Date(obj.last)) obj.last = row.appointment_time;
-      obj.total += row.services.price;
+      obj.total += service.price;
       map.set(cust.id, obj);
     }
   });
@@ -65,10 +66,10 @@ export default async function CustomersPage() {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead>
             <tr>
-              <th className="px-3 py-2 text-left text-sm font-semibold">İsim</th>
-              <th className="px-3 py-2 text-left text-sm font-semibold">Telefon</th>
-              <th className="px-3 py-2 text-left text-sm font-semibold">Son Ziyaret</th>
-              <th className="px-3 py-2 text-left text-sm font-semibold">Toplam Harcama</th>
+              <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">İsim</th>
+              <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Telefon</th>
+              <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Son Ziyaret</th>
+              <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Toplam Harcama</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
