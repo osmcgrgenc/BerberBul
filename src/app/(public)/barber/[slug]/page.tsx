@@ -61,6 +61,12 @@ export default async function BarberProfilePage({ params, searchParams }: PagePr
         message: 'Randevu oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.'
       };
     }
+    if (urlError === 'appointment-conflict') {
+      return {
+        type: 'error' as const,
+        message: 'Seçilen saat için zaten bir randevu var. Lütfen başka bir zaman seçin.'
+      };
+    }
     if (urlError === 'favorite-failed') {
       return {
         type: 'error' as const,
