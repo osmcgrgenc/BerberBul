@@ -53,6 +53,13 @@ export interface Customer {
   phone?: string;
 }
 
+export interface CustomerNote {
+  id: string;
+  note_type: string;
+  content: string;
+  created_at: string;
+}
+
 export interface Appointment {
   id: number;
   appointment_time: string;

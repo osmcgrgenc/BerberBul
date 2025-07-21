@@ -145,6 +145,33 @@ CREATE TABLE customer_favorites (
   UNIQUE (customer_id, barber_id)
 );
 
+-- customer_notes tablosu
+CREATE TABLE customer_notes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  note_type TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- customer_tags tablosu
+CREATE TABLE customer_tags (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  tag TEXT NOT NULL
+);
+
+-- customer_gallery tablosu
+CREATE TABLE customer_gallery (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  barber_id UUID REFERENCES barbers(id) ON DELETE CASCADE,
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  image_path TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 -- RLS (Row Level Security) Politikaları
 -- tenants tablosu için RLS
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
@@ -209,6 +236,30 @@ CREATE POLICY "Customers manage their own favorites" ON customer_favorites FOR A
   customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid())
 ) WITH CHECK (
   customer_id IN (SELECT id FROM customers WHERE user_id = auth.uid())
+);
+
+-- customer_notes tablosu için RLS
+ALTER TABLE customer_notes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Barbers manage their own customer notes" ON customer_notes FOR ALL USING (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
+) WITH CHECK (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
+);
+
+-- customer_tags tablosu için RLS
+ALTER TABLE customer_tags ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Barbers manage their own customer tags" ON customer_tags FOR ALL USING (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
+) WITH CHECK (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
+);
+
+-- customer_gallery tablosu için RLS
+ALTER TABLE customer_gallery ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Barbers manage their own customer gallery" ON customer_gallery FOR ALL USING (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
+) WITH CHECK (
+  barber_id IN (SELECT id FROM barbers WHERE user_id = auth.uid())
 );
 
 -- Örnek kiracı ekleme
