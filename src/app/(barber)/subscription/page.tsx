@@ -2,8 +2,13 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { PricingCard } from '@/components/organisms/PricingCard';
 import { subscribeToPlan } from './actions';
+import ToastMessage from '@/components/molecules/ToastMessage';
 
-export default async function SubscriptionPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function SubscriptionPage({ searchParams }: PageProps) {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -33,10 +38,26 @@ export default async function SubscriptionPage() {
     );
   }
 
+  const params = await searchParams;
+  const { success, error: urlError } = params;
+
+  const getMessage = () => {
+    if (success === 'subscribed') {
+      return { type: 'success' as const, message: 'Abonelik başarıyla güncellendi!' };
+    }
+    if (urlError === 'subscription_failed') {
+      return { type: 'error' as const, message: 'Abonelik güncellenirken bir hata oluştu.' };
+    }
+    return null;
+  };
+
+  const message = getMessage();
+
   const isSubscribed = barber?.subscription_status === 'active';
 
   return (
     <div className="container mx-auto p-4">
+      {message && <ToastMessage type={message.type} message={message.message} />}
       <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Abonelik Yönetimi</h1>
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8 border border-gray-200 dark:border-gray-700">
         <p className="text-lg text-gray-700 dark:text-gray-300">
