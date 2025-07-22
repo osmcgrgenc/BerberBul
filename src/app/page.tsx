@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import PricingSection from "@/components/organisms/PricingSection";
 import FAQSection from "@/components/organisms/FAQSection";
 import ContactSection from "@/components/organisms/ContactSection";
+import { CalendarDays, Scissors, Search } from "lucide-react";
 
 export default function Home() {
   return (
     <LandingLayout>
       {/* Hero Section */}
-      <section className="text-center py-16 md:py-24 animate-in fade-in slide-in-from-top-8 duration-700">
+      <section className="relative text-center py-16 md:py-24 animate-in fade-in slide-in-from-top-8 duration-700 overflow-hidden">
+        {/* Grid Background */}
+        <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-slate-950 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
         <h1 className="text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-emerald-600 via-blue-500 to-teal-400 bg-clip-text text-transparent animate-in fade-in delay-100">
           BerberBul ile Yeni Bir Sen
         </h1>
@@ -30,18 +34,27 @@ export default function Home() {
       {/* Feature Grid */}
       <section className="py-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {/* Feature 1 */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 text-center border border-gray-100 dark:border-slate-800 hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔍</div>
+            <div className="mb-4 inline-block p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-full group-hover:scale-110 transition-transform">
+              <Search className="h-8 w-8 text-emerald-600 dark:text-emerald-300" />
+            </div>
             <h3 className="font-semibold text-xl mb-2 text-emerald-700 dark:text-emerald-300">Berberleri Keşfet</h3>
             <p className="text-gray-600 dark:text-gray-300">Bölgenizdeki en iyi berberleri kolayca bulun.</p>
           </div>
+          {/* Feature 2 */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 text-center border border-gray-100 dark:border-slate-800 hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📅</div>
+            <div className="mb-4 inline-block p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-full group-hover:scale-110 transition-transform">
+              <CalendarDays className="h-8 w-8 text-emerald-600 dark:text-emerald-300" />
+            </div>
             <h3 className="font-semibold text-xl mb-2 text-emerald-700 dark:text-emerald-300">Kolayca Randevu Al</h3>
             <p className="text-gray-600 dark:text-gray-300">Uygun tarih ve saati seçerek randevunuzu oluşturun.</p>
           </div>
+          {/* Feature 3 */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 text-center border border-gray-100 dark:border-slate-800 hover:shadow-2xl hover:scale-105 transition-all duration-300 group">
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">💇‍♂️</div>
+            <div className="mb-4 inline-block p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-full group-hover:scale-110 transition-transform">
+              <Scissors className="h-8 w-8 text-emerald-600 dark:text-emerald-300" />
+            </div>
             <h3 className="font-semibold text-xl mb-2 text-emerald-700 dark:text-emerald-300">Keyfini Çıkar</h3>
             <p className="text-gray-600 dark:text-gray-300">Randevu saatinizde berberinizde olun ve yeni görünümünüzün tadını çıkarın.</p>
           </div>
