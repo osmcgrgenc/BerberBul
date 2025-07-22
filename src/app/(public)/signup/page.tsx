@@ -21,7 +21,9 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { data: { user }, error } = await supabase.auth.signUp({ email, password, 
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password, 
       options: {
         data: { 
           name: name,
@@ -30,27 +32,14 @@ export default function SignupPage() {
       }
     });
     setLoading(false);
+
     if (error) {
       toast.error(error.message || "Kayıt başarısız!");
-    } else if (user) {
-      toast.success("Kayıt başarılı! Lütfen e-postanızı kontrol edin.");
-      if (role === "barber") {
-        await supabase.from("barbers").insert({
-          user_id: user.id,
-          name: user.user_metadata.name,
-          email: user.email,
-          role: "barber"
-        });
-        router.push("/barber/dashboard");
-      } else {
-        await supabase.from("customers").insert({
-          user_id: user.id,
-          name: user.user_metadata.name,
-          email: user.email,
-          role: "customer"
-        });
-        router.push("/");
-      }
+    } else if (data.user) {
+      toast.success("Kayıt başarılı! Hesabınızı doğrulamak için lütfen e-postanızı kontrol edin.");
+      // Yönlendirme, kullanıcı e-postasını doğruladıktan sonra login sayfasında gerçekleşecek.
+      // İsteğe bağlı olarak kullanıcıyı login sayfasına yönlendirebilirsiniz.
+      router.push("/login");
     }
   };
 

@@ -273,6 +273,7 @@ CREATE POLICY "Owners manage staff" ON staff FOR ALL USING (
       AND s2.role = 'owner'
       AND s2.barber_id = staff.barber_id
   )
+);
 -- customer_notes tablosu için RLS
 ALTER TABLE customer_notes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Barbers manage their own customer notes" ON customer_notes FOR ALL USING (
@@ -300,3 +301,32 @@ CREATE POLICY "Barbers manage their own customer gallery" ON customer_gallery FO
 -- Örnek kiracı ekleme
 INSERT INTO tenants (slug, name) VALUES ('ahmetkuafor', 'Ahmet Kuaför');
 INSERT INTO tenants (slug, name) VALUES ('mehmetberber', 'Mehmet Berber');
+
+-- =================================================================
+-- === OTOMATIK KULLANICI PROFILI OLUSTURMA (YENI EKLENEN KOD) ===
+-- =================================================================
+
+-- public.handle_new_user fonksiyonunu oluşturur
+-- Bu fonksiyon, auth.users tablosuna yeni bir kullanıcı eklendiğinde tetiklenir.
+-- Kullanıcının meta verisindeki role göre public.customers veya public.barbers tablosuna bir kayıt ekler.
+create or replace function public.handle_new_user()
+returns trigger as
+'
+begin
+  if new.raw_user_meta_data->>''role'' = ''barber'' then
+    insert into public.barbers (user_id, name, email, role)
+    values (new.id, new.raw_user_meta_data->>''name'', new.email, ''barber'');
+  elsif new.raw_user_meta_data->>''role'' = ''customer'' then
+    insert into public.customers (user_id, name, email, role)
+    values (new.id, new.raw_user_meta_data->>''name'', new.email, ''customer'');
+  end if;
+  return new;
+end;
+'
+language plpgsql security definer;
+
+-- auth.users tablosu üzerinde trigger oluşturur
+-- Her yeni kullanıcı eklendikten sonra handle_new_user fonksiyonunu çalıştırır.
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
