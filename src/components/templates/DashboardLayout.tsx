@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardNav, { NavItem } from '@/components/organisms/DashboardNav';
-import AuthButton from '@/components/AuthButton';
+import AuthButton from '@/components/molecules/AuthButton';
 import Link from 'next/link';
 import { Home, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';

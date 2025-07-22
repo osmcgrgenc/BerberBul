@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { PricingCard } from '@/components/organisms/PricingCard';
+import { PricingCard } from '@/components/molecules/PricingCard';
 import { subscribeToPlan } from './actions';
 import ToastMessage from '@/components/molecules/ToastMessage';
 
