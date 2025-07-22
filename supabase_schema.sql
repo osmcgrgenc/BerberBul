@@ -31,13 +31,14 @@ CREATE TABLE barbers (
   tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Supabase Auth kullanıcısı
   name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL, -- SEO dostu URL için
+  slug TEXT UNIQUE, -- SEO dostu URL için (NOT NULL kaldırıldı)
   category barber_category, -- Kategori
   bio TEXT, -- Berberin tanıtım yazısı
   description TEXT,
   address TEXT,
   phone TEXT,
   email TEXT,
+  role TEXT, -- Eklendi
   -- Abonelik bilgileri
   subscription_status subscription_status DEFAULT 'trialing',
   plan_id TEXT,
@@ -77,6 +78,7 @@ CREATE TABLE customers (
   name TEXT NOT NULL,
   phone TEXT,
   email TEXT,
+  role TEXT, -- Eklendi
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
@@ -310,20 +312,21 @@ INSERT INTO tenants (slug, name) VALUES ('mehmetberber', 'Mehmet Berber');
 -- Bu fonksiyon, auth.users tablosuna yeni bir kullanıcı eklendiğinde tetiklenir.
 -- Kullanıcının meta verisindeki role göre public.customers veya public.barbers tablosuna bir kayıt ekler.
 create or replace function public.handle_new_user()
-returns trigger as
-'
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
 begin
-  if new.raw_user_meta_data->>''role'' = ''barber'' then
+  if new.raw_user_meta_data->>'role' = 'barber' then
     insert into public.barbers (user_id, name, email, role)
-    values (new.id, new.raw_user_meta_data->>''name'', new.email, ''barber'');
-  elsif new.raw_user_meta_data->>''role'' = ''customer'' then
+    values (new.id, new.raw_user_meta_data->>'name', new.email, 'barber');
+  elsif new.raw_user_meta_data->>'role' = 'customer' then
     insert into public.customers (user_id, name, email, role)
-    values (new.id, new.raw_user_meta_data->>''name'', new.email, ''customer'');
+    values (new.id, new.raw_user_meta_data->>'name', new.email, 'customer');
   end if;
   return new;
 end;
-'
-language plpgsql security definer;
+$$;
 
 -- auth.users tablosu üzerinde trigger oluşturur
 -- Her yeni kullanıcı eklendikten sonra handle_new_user fonksiyonunu çalıştırır.
