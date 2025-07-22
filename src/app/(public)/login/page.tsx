@@ -30,7 +30,9 @@ export default function LoginPage() {
         .select('*')
         .eq('user_id', user.id)
         .single();
-      toast.error(berberError?.message || "Giriş başarısız!");
+      if (berberError) {
+        toast.error(berberError.message || "Giriş başarısız!");
+      }
       if (berber) {
         router.push("/berber/dashboard");
       } else {
